@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <script src="/components/navbar.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matriz de Cruce Documental - FEMSA SIG</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: linear-gradient(135deg, #1a237e 0%, #3498db 50%, #27ae60 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #1a237e 0%, #3498db 50%, #27ae60 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .header h2 {
+            margin: 10px 0 0 0;
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 30px;
+        }
+        .info-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 5px solid #1a237e;
+        }
+        .info-title {
+            color: #1a237e;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .normas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .norma-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border-top: 4px solid;
+        }
+        .iso-9001 { border-top-color: #3498db; }
+        .iso-14001 { border-top-color: #27ae60; }
+        .iso-45001 { border-top-color: #e74c3c; }
+        .iso-50001 { border-top-color: #f39c12; }
+        .norma-nombre {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        .norma-desc {
+            font-size: 11px;
+            color: #7f8c8d;
+        }
+        .matriz-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            font-size: 11px;
+        }
+        .matriz-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            font-weight: bold;
+            padding: 12px 8px;
+            text-align: center;
+            font-size: 11px;
+        }
+        .matriz-subheader {
+            background: #34495e;
+            color: white;
+            font-weight: bold;
+            padding: 10px 8px;
+            text-align: center;
+            font-size: 10px;
+        }
+        .matriz-cell {
+            padding: 8px 6px;
+            border: 1px solid #ecf0f1;
+            font-size: 10px;
+            vertical-align: top;
+        }
+        .requisito-cell {
+            font-weight: bold;
+            color: #2c3e50;
+            background: #f8f9fa;
+        }
+        .documento-cell {
+            line-height: 1.3;
+            color: #34495e;
+        }
+        .estado-cumple {
+            background: #d5f4e6;
+            color: #27ae60;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .estado-parcial {
+            background: #fff3cd;
+            color: #856404;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .estado-no-cumple {
+            background: #fadbd8;
+            color: #e74c3c;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .estadisticas {
+            background: #e8f4fd;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 30px;
+        }
+        .estadisticas-title {
+            color: #1976d2;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+        }
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border-top: 4px solid #1976d2;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #1976d2;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            font-size: 11px;
+            color: #7f8c8d;
+        }
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>MATRIZ DE CRUCE DOCUMENTAL ISO</h1>
+            <h2>SISTEMA INTEGRADO DE GESTIÓN - FEMSA</h2>
+            <p>Relación entre requisitos normativos y documentación del SIG</p>
+        </div>
+        
+        <div class="content">
+            <div class="info-section">
+                <div class="info-title">NORMAS INTEGRADAS EN EL SIG</div>
+                <div class="normas-grid">
+                    <div class="norma-card iso-9001">
+                        <div class="norma-nombre">ISO 9001:2015</div>
+                        <div class="norma-desc">Sistema de Gestión de Calidad</div>
+                    </div>
+                    <div class="norma-card iso-14001">
+                        <div class="norma-nombre">ISO 14001:2015</div>
+                        <div class="norma-desc">Sistema de Gestión Ambiental</div>
+                    </div>
+                    <div class="norma-card iso-45001">
+                        <div class="norma-nombre">ISO 45001:2018</div>
+                        <div class="norma-desc">Sistema de Gestión SST</div>
+                    </div>
+                    <div class="norma-card iso-50001">
+                        <div class="norma-nombre">ISO 50001:2018</div>
+                        <div class="norma-desc">Sistema de Gestión Energética</div>
+                    </div>
+                </div>
+            </div>
+            
+            <table class="matriz-table">
+                <thead>
+                    <tr>
+                        <th class="matriz-header" rowspan="2" style="width: 12%;">NORMA</th>
+                        <th class="matriz-header" rowspan="2" style="width: 8%;">CLÁUSULA</th>
+                        <th class="matriz-header" rowspan="2" style="width: 25%;">REQUISITO</th>
+                        <th class="matriz-header" colspan="3">DOCUMENTACIÓN ASOCIADA</th>
+                        <th class="matriz-header" rowspan="2" style="width: 8%;">ESTADO</th>
+                    </tr>
+                    <tr>
+                        <th class="matriz-subheader" style="width: 20%;">DOCUMENTO</th>
+                        <th class="matriz-subheader" style="width: 15%;">CÓDIGO</th>
+                        <th class="matriz-subheader" style="width: 12%;">RESPONSABLE</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- ISO 9001:2015 -->
+                    <tr>
+                        <td class="matriz-cell requisito-cell" rowspan="3">ISO 9001:2015</td>
+                        <td class="matriz-cell">4.1-4.2</td>
+                        <td class="matriz-cell">Contexto de la organización y partes interesadas</td>
+                        <td class="matriz-cell documento-cell">Análisis DOFA<br>Matriz de Stakeholders</td>
+                        <td class="matriz-cell">SIG-DOFA-001<br>SIG-STAKE-001</td>
+                        <td class="matriz-cell">Gerente General</td>
+                        <td class="matriz-cell estado-cumple">CUMPLE</td>
+                    </tr>
+                    <tr>
+                        <td class="matriz-cell">5.1-5.3</td>
+                        <td class="matriz-cell">Liderazgo y compromiso, Política de calidad</td>
+                        <td class="matriz-cell documento-cell">Política Integrada de Gestión<br>Manual del SIG</td>
+                        <td class="matriz-cell">SIG-POL-001<br>SIG-MAN-001</td>
+                        <td class="matriz-cell">Alta Dirección</td>
+                        <td class="matriz-cell estado-cumple">CUMPLE</td>
+                    </tr>
+                    <tr>
+                        <td class="matriz-cell">6.1-6.3</td>
+                        <td class="matriz-cell">Acciones para abordar riesgos y oportunidades</td>
+                        <td class="matriz-cell documento-cell">Matriz de Riesgos y Oportunidades<br>Planes de Acción</td>
+                        <td class="matriz-cell">SIG-RIESGO-001<br>SIG-PLAN-001</td>
+                        <td class="matriz-cell">Gerente SGSST</td>
+                        <td class="matriz-cell estado-cumple">CUMPLE</td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="matriz-cell requisito-cell">ISO 9001:2015</td>
+                        <td class="matriz-cell">7.5</td>
+                        <td class="matriz-cell">Información documentada</td>
+                        <td class="matriz-cell documento-cell">Procedimiento Control de Documentos<br>Listado Maestro de Documentos</td>
+                        <td class="matriz-cell">SIG-PROC-001<br>SIG-LIST-001</td>
+                        <td class="matriz-cell">Coordinador SIG</td>
+                        <td class="matriz-cell estado-cumple">CUMPLE</td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="matriz-cell requisito-cell">ISO 9001:2015</td>
+                        <td class="matriz-cell">8.1-8.7</td>
+                        <td class="matriz-cell">Planificación y control operacional</td>
+                        <td class="matriz-cell documento-cell">Mapa de Procesos<br>Procedimientos Operacionales<br>Instrucciones de Trabajo</td>
+                        <td class="matriz-cell">SIG-MAPA-001<br>SIG-PROC-002-020<br>SIG-INST-001-050</td>
+                        <td class="matriz-cell">Gerentes de Área</td>
+                        <td class="matriz-cell estado-cumple">CUMPLE</td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="matriz-cell requisito-cell">ISO 9001:2015</td>
+                        <td class="matriz-cell">9.1-9.3</td>
+                        <td class="matriz-cell">Seguimiento, medición, análisis y evaluación</td>
+                        <td class="matriz-cell documento-cell">Dashboard de KPIs<br>Procedimiento Auditorías Internas<br>Informes de Revisión por Dirección</td>
+                        <td class="matriz-cell">SIG-KPI-001<br>SIG-PROC-021<br>SIG-INF-001</td>
+                        <td class="matriz-cell">Gerente Calidad</td>
+                        <td class="matriz-cell estado-cumple">CUMPLE</td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="matriz-cell requisito-cell">ISO 9001:2015</td>
+                        <td class="matriz-cell">10.1-10.3</td>
+                        <td class="matriz-cell">No conformidad y acción correctiva, Mejora continua</td>
+                        <td class="matriz-cell documento-cell">Procedimiento Acciones Correctivas<br>Registro de No Conformidades<br>Planes de Mejora</td>
+                        <td class="matriz-cell">SIG-PROC-022<br>SIG-REG-001<br>SIG-MEJORA-001</td>
+                        <td class="matriz-cell">Coordinador SIG</td>
+                        <td class="matriz-cell estado-cumple">CUMPLE</td>
+                    </tr>
+                    
+                    <!-- ISO 14001:2015 -->
+                    <tr>
+                        <td class="matriz-cell requisito-cell" rowspan="2">ISO 14001:2015</td>
+                        <td class="matriz-cell">6.1.2</td>
+                        <td class="matriz-cell">Aspectos ambientales</td>
+                        <td class="matriz-cell documento-cell">Matriz de Aspectos e Impactos Ambientales<br>Procedimiento Identificación Aspectos</td>
+                        <td class="matriz-cell">SIG-AMB-001<br>SIG-PROC-030</td>
+                        <td class="matriz-cell">Coordinador Ambiental</td>
+                        <td class="matriz-cell estado-cumple">CUMPLE</td>
+                    </tr>
+                    <tr>
+                        <td class="matriz-cell">6.1.3</td>
+                        <td class="matriz-cell">Requisitos legales y otros requisitos</td>
+                        <td class="matriz-cell documento-cell">Matriz de Requisitos Legales Ambientales<br>Procedimiento Evaluación Cumplimiento</td>
+                        <td class="matriz-cell">SIG-LEG-002<br>SIG-PROC-031</td>
+                        <td class="matriz-cell">Asesor Legal Ambiental</td>
+                        <td class="matriz-cell estado-cumple">CUMPLE</td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="matriz-cell requisito-cell">ISO 14001:2015</td>
+                        <td class="matriz-cell">8.1</td>
+                        <td class="matriz-cell">Planificación y control operacional ambiental</td>
+                        <td class="matriz-cell documento-cell">Programas de Gestión Ambiental<br>Procedimientos Operacionales Ambientales<br>Planes de Contingencia</td>
+                        <td class="matriz-cell">SIG-AMB-002<br>SIG-PROC-032-040<br>SIG-CONT-001</td>
+                        <td class="matriz-cell">Coordinador Ambiental</td>
+                        <td class="matriz-cell estado-cumple">CUMPLE</td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="matriz-cell requisito-cell">ISO 14001:2015</td>
+                        <td class="matriz-cell">9.1.1</td>
+                        <td class="matriz-cell">Seguimiento, medición, análisis ambiental</td>
+                        <td class="matriz-cell documento-cell">Indicadores Ambientales<br>Procedimiento Monitoreo Ambiental<br>Registros de Medición</td>
+                        <td class="matriz-cell">SIG-KPI-002<br>SIG-PROC-041<br>SIG-REG-002</td>
+                        <td class="matriz-cell">Analista Ambiental</td>
+                        <td class="matriz-cell estado-cumple">CUMPLE</td>
+                    </tr>
+                    
+                    <!-- ISO 45001:2018 -->
+                    <tr>
+                        <td class="matriz-cell requisito-cell" rowspan="2">ISO 45001:2018</td>
+                        <td class="matriz-cell">6.1.2</td>
+                        <td class="matriz-cell">Identificación de peligros y evaluación de riesgos</td>
+                        <td class="matriz-cell documento-cell">Matriz IPER<br>Procedimiento Identificación Peligros<br>Metodología Evaluación Riesgos</td>
+                        <td class="matriz-cell">SIG-SST-001<br>SIG-PROC-050<br>SIG-METO-001</td>
+                        <td class="matriz-cell">Gerente SGSST</td>
+                        <td class="matriz-cell estado-cumple">CUMPLE</td>
+                    </tr>
+                    <tr>
+                        <td class="matriz-cell">6.1.3</td>
+                        <td class="matriz-cell">Requisitos legales SST</td>
+                        <td class="matriz-cell documento-cell">Matriz de Requisitos Legales SST<br>Procedimiento Evaluación Cumplimiento Legal</td>
+                        <td class="matriz-cell">SIG-LEG-003<br>SIG-PROC-051</td>
+                        <td class="matriz-cell">Coordinador SST</td>
+                        <td class="matriz-cell estado-cumple">CUMPLE</td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="matriz-cell requisito-cell">ISO 45001:2018</td>
+                        <td class="matriz-cell">7.2</td>
+                        <td class="matriz-cell">Competencia, formación y toma de conciencia</td>
+                        <td class="matriz-cell documento-cell">Plan de Capacitación SST<br>Matriz de Competencias<br>Registros de Entrenamiento</td>
+                        <td class="matriz-cell">SIG-SST-002<br>SIG-COMP-001<br>SIG-REG-003</td>
+                        <td class="matriz-cell">Gerente RRHH</td>
+                        <td class="matriz-cell estado-cumple">CUMPLE</td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="matriz-cell requisito-cell">ISO 45001:2018</td>
+                        <td class="matriz-cell">8.1.2</td>
+                        <td class="matriz-cell">Eliminación de peligros y reducción de riesgos</td>
+                        <td class="matriz-cell documento-cell">Estrategia Seguridad 0.0<br>Programas de Control<br>Planes de Acción Preventiva</td>
+                        <td class="matriz-cell">SIG-SST-003<br>SIG-CONT-002<br>SIG-PREV-001</td>
+                        <td class="matriz-cell">Gerente SGSST</td>
+                        <td class="matriz-cell estado-cumple">CUMPLE</td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="matriz-cell requisito-cell">ISO 45001:2018</td>
+                        <td class="matriz-cell">9.1.2</td>
+                        <td class="matriz-cell">Evaluación del cumplimiento SST</td>
+                        <td class="matriz-cell documento-cell">Indicadores SST<br>Procedimiento Auditorías SST<br>Informes de Desempeño</td>
+                        <td class="matriz-cell">SIG-KPI-003<br>SIG-PROC-052<br>SIG-INF-002</td>
+                        <td class="matriz-cell">Coordinador SST</td>
+                        <td class="matriz-cell estado-cumple">CUMPLE</td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="matriz-cell requisito-cell">ISO 45001:2018</td>
+                        <td class="matriz-cell">10.2</td>
+                        <td class="matriz-cell">Incidentes, no conformidades y acciones correctivas</td>
+                        <td class="matriz-cell documento-cell">Procedimiento Investigación Incidentes<br>Registro de Accidentes<br>Plan de Acciones Correctivas SST</td>
+                        <td class="matriz-cell">SIG-PROC-053<br>SIG-REG-004<br>SIG-CORR-001</td>
+                        <td class="matriz-cell">Gerente SGSST</td>
+                        <td class="matriz-cell estado-cumple">CUMPLE</td>
+                    </tr>
+                    
+                    <!-- ISO 50001:2018 -->
+                    <tr>
+                        <td class="matriz-cell requisito-cell">ISO 50001:2018</td>
+                        <td class="matriz-cell">6.3</td>
+                        <td class="matriz-cell">Revisión energética</td>
+                        <td class="matriz-cell documento-cell">Revisión Energética FEMSA<br>Identificación Usos Significativos<br>Línea Base Energética</td>
+                        <td class="matriz-cell">SIG-ENER-001<br>SIG-ENER-002<br>SIG-ENER-003</td>
+                        <td class="matriz-cell">Coordinador Energía</td>
+                        <td class="matriz-cell estado-parcial">PARCIAL</td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="matriz-cell requisito-cell">ISO 50001:2018</td>
+                        <td class="matriz-cell">8.1</td>
+                        <td class="matriz-cell">Planificación y control operacional energético</td>
+                        <td class="matriz-cell documento-cell">Plan de Gestión Energética<br>Procedimientos Control Operacional<br>Criterios Operacionales Energéticos</td>
+                        <td class="matriz-cell">SIG-ENER-004<br>SIG-PROC-060<br>SIG-CRIT-001</td>
+                        <td class="matriz-cell">Coordinador Energía</td>
+                        <td class="matriz-cell estado-cumple">CUMPLE</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="estadisticas">
+                <div class="estadisticas-title">ESTADÍSTICAS DE CUMPLIMIENTO NORMATIVO</div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">18</div>
+                        <div class="stat-label">Requisitos Evaluados</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">17</div>
+                        <div class="stat-label">Requisitos Cumplidos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">1</div>
+                        <div class="stat-label">Cumplimiento Parcial</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">94.4%</div>
+                        <div class="stat-label">Nivel de Cumplimiento</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">65+</div>
+                        <div class="stat-label">Documentos Generados</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">4</div>
+                        <div class="stat-label">Normas Integradas</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p><strong>Sistema Integrado de Gestión - FEMSA</strong></p>
+            <p>Matriz de Cruce Documental actualizada 2024 | Universidad Libre - Bogotá</p>
+            <p>Elaborado por: Esteban Camilo Parra, Andrés Felipe Galeano, Santiago Orlando Martínez, Juan Pablo Gómez</p>
+        </div>
+    </div>
+</body>
+</html>
